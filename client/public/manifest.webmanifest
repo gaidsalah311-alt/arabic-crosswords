@@ -1,12 +1,16 @@
 {
   "name": "شَبَكة — كلمات متقاطعة عربية",
   "short_name": "شَبَكة",
-  "description": "كلمات متقاطعة عربية تعمل دون إنترنت.",
+  "description": "لعبة كلمات متقاطعة عربية تعمل دون إنترنت.",
   "lang": "ar",
   "dir": "rtl",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#f7f8f4",
   "theme_color": "#0d7c73",
-  "icons": []
+  "icons": [
+    { "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any maskable" },
+    { "src": "/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
 }
