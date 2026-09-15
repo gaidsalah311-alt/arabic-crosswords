@@ -27,7 +27,11 @@ describe("Arabic crossword engine", () => {
             : [[cell.x - 1, cell.y], [cell.x + 1, cell.y]];
           for (const [x, y] of neighbors) {
             const neighborKey = `${x}:${y}`;
-            expect(ownCells.has(neighborKey) || !occupied.has(neighborKey), stage.id).toBe(true);
+            const isValidCrossing = board.entries.some((other) => other.id !== entry.id
+              && other.direction !== entry.direction
+              && other.cells.some((otherCell) => otherCell.x === cell.x && otherCell.y === cell.y)
+              && other.cells.some((otherCell) => otherCell.x === x && otherCell.y === y));
+            expect(ownCells.has(neighborKey) || !occupied.has(neighborKey) || isValidCrossing, stage.id).toBe(true);
           }
         }
       }

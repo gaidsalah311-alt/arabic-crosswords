@@ -113,6 +113,15 @@ function placeEntries(entries: StageEntry[]): PlacedEntry[] {
   const ordered = [...entries].map((entry) => ({ entry, word: chars(entry.word) })).filter(({ word }) => word.length > 0).sort((a, b) => b.word.length - a.word.length);
   if (!ordered.length) return [];
 
+  const fallbackLayout = (): PlacedEntry[] => {
+    let y = 0;
+    return ordered.map(({ entry, word }) => {
+      const cells = candidateCells(word, 0, y, "across");
+      y += 2;
+      return { ...entry, word: word.join(""), startX: 0, startY: cells[0].y, direction: "across", cells };
+    });
+  };
+
   const tryRoot = (rootIndex: number): PlacedEntry[] | undefined => {
     const occupied = new Map<string, string>();
     const placed: PlacedEntry[] = [];
@@ -156,7 +165,8 @@ function placeEntries(entries: StageEntry[]): PlacedEntry[] {
     const result = tryRoot(rootIndex);
     if (result) return result;
   }
-  return [];
+  // Keep every answer playable when a stage has no strict connected solution.
+  return fallbackLayout();
 }
 
 export function createCrosswordBoard(entries: StageEntry[]): CrosswordBoard {
