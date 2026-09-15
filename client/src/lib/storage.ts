@@ -14,31 +14,38 @@ export type SavedProgress = {
   completed: Record<string, { completedAt: string; hintsUsed: number }>;
   lastPlayed?: { level: number; stage: number };
   hints: number;
+  points: number;
+  achievements: string[];
+  settings: { sound: boolean; reducedMotion: boolean };
   currentGame?: SavedGame;
 };
 
-const STORAGE_KEY = "arabic-crosswords-progress-v2";
-const LEGACY_KEY = "arabic-crosswords-progress-v1";
-const DEFAULT_PROGRESS: SavedProgress = { completed: {}, hints: 5 };
+const STORAGE_KEY = "arabic-crosswords-progress-v3";
+const LEGACY_KEYS = ["arabic-crosswords-progress-v2", "arabic-crosswords-progress-v1"];
+const DEFAULT_PROGRESS: SavedProgress = { completed: {}, hints: 5, points: 0, achievements: [], settings: { sound: true, reducedMotion: false } };
 
 function sanitizeProgress(value: unknown): SavedProgress {
-  if (!value || typeof value !== "object") return { ...DEFAULT_PROGRESS };
+  if (!value || typeof value !== "object") return { ...DEFAULT_PROGRESS, settings: { ...DEFAULT_PROGRESS.settings } };
   const parsed = value as Partial<SavedProgress>;
+  const settings = parsed.settings && typeof parsed.settings === "object" ? parsed.settings as Partial<SavedProgress["settings"]> : {};
   return {
     completed: parsed.completed && typeof parsed.completed === "object" ? parsed.completed : {},
     lastPlayed: parsed.lastPlayed,
     hints: typeof parsed.hints === "number" ? Math.max(0, parsed.hints) : DEFAULT_PROGRESS.hints,
+    points: typeof parsed.points === "number" ? Math.max(0, Math.floor(parsed.points)) : 0,
+    achievements: Array.isArray(parsed.achievements) ? parsed.achievements.filter((item): item is string => typeof item === "string") : [],
+    settings: { sound: settings.sound !== false, reducedMotion: settings.reducedMotion === true },
     currentGame: parsed.currentGame,
   };
 }
 
 export function loadProgress(): SavedProgress {
-  if (typeof window === "undefined") return { ...DEFAULT_PROGRESS };
+  if (typeof window === "undefined") return { ...DEFAULT_PROGRESS, settings: { ...DEFAULT_PROGRESS.settings } };
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY) ?? window.localStorage.getItem(LEGACY_KEY);
-    return raw ? sanitizeProgress(JSON.parse(raw)) : { ...DEFAULT_PROGRESS };
+    const raw = [STORAGE_KEY, ...LEGACY_KEYS].map((key) => window.localStorage.getItem(key)).find(Boolean);
+    return raw ? sanitizeProgress(JSON.parse(raw)) : { ...DEFAULT_PROGRESS, settings: { ...DEFAULT_PROGRESS.settings } };
   } catch {
-    return { ...DEFAULT_PROGRESS };
+    return { ...DEFAULT_PROGRESS, settings: { ...DEFAULT_PROGRESS.settings } };
   }
 }
 
@@ -56,9 +63,19 @@ export function saveCurrentGame(progress: SavedProgress, game: SavedGame): Saved
 
 export function markStageComplete(progress: SavedProgress, level: number, stage: number, hintsUsed: number): SavedProgress {
   const { currentGame: _currentGame, ...withoutGame } = progress;
+  const stageId = stageKey(level, stage);
+  const completed = { ...progress.completed, [stageId]: { completedAt: new Date().toISOString(), hintsUsed } };
+  const achievements = new Set(progress.achievements);
+  const count = Object.keys(completed).length;
+  if (count >= 1) achievements.add("first-stage");
+  if (count >= 10) achievements.add("ten-stages");
+  if (count >= 50) achievements.add("fifty-stages");
+  if (count >= totalStageCount()) achievements.add("all-stages");
   return {
     ...withoutGame,
-    completed: { ...progress.completed, [stageKey(level, stage)]: { completedAt: new Date().toISOString(), hintsUsed } },
+    completed,
+    points: progress.points + (progress.completed[stageId] ? 0 : 100 + Math.max(0, 25 - hintsUsed * 5)),
+    achievements: Array.from(achievements),
     lastPlayed: { level, stage },
   };
 }
@@ -74,6 +91,6 @@ export function completedLevelCount(progress: SavedProgress): number { return Ar
 export function resetProgress(): void {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(STORAGE_KEY);
-  window.localStorage.removeItem(LEGACY_KEY);
+  LEGACY_KEYS.forEach((key) => window.localStorage.removeItem(key));
   window.dispatchEvent(new CustomEvent("crosswords-progress-updated"));
 }
