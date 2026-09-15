@@ -1,36 +1,9 @@
 export type Difficulty = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
-
-export type WordDefinition = {
-  word: string;
-  clue: string;
-  category: string;
-  difficulty: Difficulty;
-};
-
+export type WordDefinition = { word: string; clue: string; category: string; difficulty: Difficulty };
 export type StageEntry = WordDefinition & { id: string };
+export type Stage = { id: string; level: number; number: number; title: string; theme: string; entries: StageEntry[] };
+export type Level = { number: number; title: string; subtitle: string; theme: string; accent: string; stages: Stage[] };
 
-export type Stage = {
-  id: string;
-  level: number;
-  number: number;
-  title: string;
-  theme: string;
-  entries: StageEntry[];
-};
-
-export type Level = {
-  number: number;
-  title: string;
-  subtitle: string;
-  theme: string;
-  accent: string;
-  stages: Stage[];
-};
-
-/**
- * بنك المحتوى المراجع مسبقًا. لا توجد أي عملية توليد عشوائي أثناء اللعب؛
- * تُبنى المراحل حتميًا من هذه البيانات المحلية فقط.
- */
 export const WORD_BANK: WordDefinition[] = [
   { word: "كتاب", clue: "وعاء المعرفة المكتوبة", category: "لغة", difficulty: 1 },
   { word: "قلم", clue: "أداة الكتابة المعروفة", category: "لغة", difficulty: 1 },
@@ -132,76 +105,42 @@ export const WORD_BANK: WordDefinition[] = [
   { word: "بيئة", clue: "المحيط الذي تعيش فيه الكائنات", category: "بيئة", difficulty: 3 },
   { word: "تدوير", clue: "إعادة استعمال المواد بعد معالجتها", category: "بيئة", difficulty: 4 },
   { word: "محيط", clue: "مسطح مائي عظيم الاتساع", category: "طبيعة", difficulty: 3 },
-  { word: "بوصلة", clue: "أداة إرشاد المسافر إلى الجهات", category: "سفر", difficulty: 3 },
 ];
 
 export const LEVEL_COUNT = 10;
 export const STAGES_PER_LEVEL = 50;
-
 const LEVEL_META = [
-  ["بداية الطريق", "خطوات أولى ممتعة", "أساسيات الحياة", "#0d9488"],
-  ["مفردات يومية", "كلمات من حولك", "الحياة اليومية", "#0891b2"],
-  ["الطبيعة من حولنا", "تأمل العالم", "الطبيعة", "#65a30d"],
-  ["الثقافة واللغة", "اتساع في التعبير", "الثقافة", "#7c3aed"],
-  ["العلوم والحياة", "فكر واكتشف", "العلوم", "#2563eb"],
-  ["التاريخ والحضارة", "آثار لا تنسى", "الحضارة", "#c2410c"],
-  ["عالم الأفكار", "أسئلة أعمق", "الفكر", "#be123c"],
-  ["الدقة والبيان", "للذواقة فقط", "اللغة", "#9333ea"],
-  ["آفاق المعرفة", "معرفة بلا حدود", "المعرفة", "#0369a1"],
-  ["التحدي الكبير", "أثبت براعتك", "التحدي", "#b45309"],
+  ["بداية الطريق", "خطوات أولى ممتعة", "أساسيات الحياة", "#0d9488"], ["مفردات يومية", "كلمات من حولك", "الحياة اليومية", "#0891b2"], ["الطبيعة من حولنا", "تأمل العالم", "الطبيعة", "#65a30d"], ["الثقافة واللغة", "اتساع في التعبير", "الثقافة", "#7c3aed"], ["العلوم والحياة", "فكر واكتشف", "العلوم", "#2563eb"], ["التاريخ والحضارة", "آثار لا تنسى", "الحضارة", "#c2410c"], ["عالم الأفكار", "أسئلة أعمق", "الفكر", "#be123c"], ["الدقة والبيان", "للذواقة فقط", "اللغة", "#9333ea"], ["آفاق المعرفة", "معرفة بلا حدود", "المعرفة", "#0369a1"], ["التحدي الكبير", "أثبت براعتك", "التحدي", "#b45309"],
 ] as const;
 
-function deterministicPick<T>(items: T[], seed: number): T {
-  return items[Math.abs(seed) % items.length];
-}
-
+function arabicChars(word: string): string[] { return Array.from(word.replace(/[\u064B-\u065F\u0670\u06D6-\u06EDـ]/g, "").replace(/[أإآٱ]/g, "ا").replace(/ى/g, "ي").replace(/ؤ/g, "و").replace(/ئ/g, "ي")); }
 function buildStage(level: number, number: number): Stage {
   const targetCount = Math.min(3 + Math.floor((level - 1) / 2), 7);
   const allowed = WORD_BANK.filter((item) => item.difficulty <= Math.min(10, level + 1));
+  const seed = Math.abs(level * 997 + number * 7919);
+  const ordered = [...allowed].sort((a, b) => ((seed + allowed.indexOf(a) * 37) % allowed.length) - ((seed + allowed.indexOf(b) * 37) % allowed.length));
   const selected: WordDefinition[] = [];
-  let cursor = level * 17 + number * 11;
-
-  while (selected.length < targetCount) {
-    const candidate = deterministicPick(allowed, cursor);
-    if (!selected.some((item) => item.word === candidate.word)) selected.push(candidate);
-    cursor += 7;
+  for (let start = 0; start < ordered.length && selected.length < targetCount; start += 1) {
+    const candidateSelection: WordDefinition[] = [ordered[start]];
+    const remaining = ordered.filter((_, i) => i !== start);
+    while (candidateSelection.length < targetCount) {
+      const chars = new Set(candidateSelection.flatMap((item) => arabicChars(item.word)));
+      const candidates = remaining.filter((item) => arabicChars(item.word).some((char) => chars.has(char)));
+      if (!candidates.length) break;
+      candidates.sort((a, b) => arabicChars(b.word).filter((char) => chars.has(char)).length - arabicChars(a.word).filter((char) => chars.has(char)).length);
+      const next = candidates[0];
+      candidateSelection.push(next);
+      remaining.splice(remaining.indexOf(next), 1);
+    }
+    if (candidateSelection.length === targetCount) selected.push(...candidateSelection);
   }
-
+  if (selected.length !== targetCount) throw new Error(`تعذر بناء مرحلة مترابطة: ${level}-${number}`);
   const meta = LEVEL_META[level - 1];
-  return {
-    id: `l${level}-s${number}`,
-    level,
-    number,
-    title: `المرحلة ${String(number).padStart(2, "0")}`,
-    theme: meta[2],
-    entries: selected.map((entry, index) => ({ ...entry, id: `${level}-${number}-${index}` })),
-  };
+  return { id: `l${level}-s${number}`, level, number, title: `المرحلة ${String(number).padStart(2, "0")}`, theme: meta[2], entries: selected.map((entry, index) => ({ ...entry, id: `${level}-${number}-${index}` })) };
 }
 
-export const LEVELS: Level[] = LEVEL_META.map((meta, index) => {
-  const number = index + 1;
-  return {
-    number,
-    title: meta[0],
-    subtitle: meta[1],
-    theme: meta[2],
-    accent: meta[3],
-    stages: Array.from({ length: STAGES_PER_LEVEL }, (_, stageIndex) => buildStage(number, stageIndex + 1)),
-  };
-});
-
-export function getStage(level: number, stage: number): Stage {
-  return LEVELS[level - 1]?.stages[stage - 1] ?? LEVELS[0].stages[0];
-}
-
-export function getLevel(level: number): Level {
-  return LEVELS[level - 1] ?? LEVELS[0];
-}
-
-export function stageKey(level: number, stage: number): string {
-  return `l${level}-s${stage}`;
-}
-
-export function totalStageCount(): number {
-  return LEVEL_COUNT * STAGES_PER_LEVEL;
-}
+export const LEVELS: Level[] = LEVEL_META.map((meta, index) => { const number = index + 1; return { number, title: meta[0], subtitle: meta[1], theme: meta[2], accent: meta[3], stages: Array.from({ length: STAGES_PER_LEVEL }, (_, i) => buildStage(number, i + 1)) }; });
+export function getStage(level: number, stage: number): Stage { return LEVELS[level - 1]?.stages[stage - 1] ?? LEVELS[0].stages[0]; }
+export function getLevel(level: number): Level { return LEVELS[level - 1] ?? LEVELS[0]; }
+export function stageKey(level: number, stage: number): string { return `l${level}-s${stage}`; }
+export function totalStageCount(): number { return LEVEL_COUNT * STAGES_PER_LEVEL; }
