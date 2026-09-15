@@ -1,0 +1,207 @@
+export type Difficulty = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+
+export type WordDefinition = {
+  word: string;
+  clue: string;
+  category: string;
+  difficulty: Difficulty;
+};
+
+export type StageEntry = WordDefinition & { id: string };
+
+export type Stage = {
+  id: string;
+  level: number;
+  number: number;
+  title: string;
+  theme: string;
+  entries: StageEntry[];
+};
+
+export type Level = {
+  number: number;
+  title: string;
+  subtitle: string;
+  theme: string;
+  accent: string;
+  stages: Stage[];
+};
+
+/**
+ * بنك المحتوى المراجع مسبقًا. لا توجد أي عملية توليد عشوائي أثناء اللعب؛
+ * تُبنى المراحل حتميًا من هذه البيانات المحلية فقط.
+ */
+export const WORD_BANK: WordDefinition[] = [
+  { word: "كتاب", clue: "وعاء المعرفة المكتوبة", category: "لغة", difficulty: 1 },
+  { word: "قلم", clue: "أداة الكتابة المعروفة", category: "لغة", difficulty: 1 },
+  { word: "باب", clue: "مدخل يغلق ويفتح", category: "منزل", difficulty: 1 },
+  { word: "نهر", clue: "مجرى ماء عذب", category: "طبيعة", difficulty: 1 },
+  { word: "شمس", clue: "نجم يمد الأرض بالضوء", category: "طبيعة", difficulty: 1 },
+  { word: "قمر", clue: "تابع الأرض المضيء ليلًا", category: "فضاء", difficulty: 1 },
+  { word: "بحر", clue: "مسطح مائي واسع", category: "طبيعة", difficulty: 1 },
+  { word: "ورد", clue: "زهرة عطرية جميلة", category: "طبيعة", difficulty: 1 },
+  { word: "بيت", clue: "مكان السكن والإقامة", category: "منزل", difficulty: 1 },
+  { word: "مفتاح", clue: "أداة فتح الأقفال", category: "منزل", difficulty: 1 },
+  { word: "طريق", clue: "مسلك يصل بين مكانين", category: "حياة", difficulty: 1 },
+  { word: "صديق", clue: "رفيق تثق به", category: "قيم", difficulty: 1 },
+  { word: "سلام", clue: "نقيض الحرب", category: "قيم", difficulty: 1 },
+  { word: "أمل", clue: "رجاء بالمستقبل", category: "مشاعر", difficulty: 1 },
+  { word: "فرح", clue: "شعور بالسرور", category: "مشاعر", difficulty: 1 },
+  { word: "سحاب", clue: "ما يتجمع في السماء من بخار", category: "طبيعة", difficulty: 2 },
+  { word: "مطر", clue: "ماء ينزل من السماء", category: "طبيعة", difficulty: 2 },
+  { word: "جبل", clue: "مرتفع طبيعي شاهق", category: "طبيعة", difficulty: 2 },
+  { word: "شجرة", clue: "نبات ذو ساق خشبية", category: "طبيعة", difficulty: 2 },
+  { word: "زهرة", clue: "عضو ملون في النبات", category: "طبيعة", difficulty: 2 },
+  { word: "عصفور", clue: "طائر صغير مغرد", category: "حيوان", difficulty: 2 },
+  { word: "حصان", clue: "حيوان سريع يستخدم للركوب", category: "حيوان", difficulty: 2 },
+  { word: "سمكة", clue: "حيوان يعيش في الماء", category: "حيوان", difficulty: 2 },
+  { word: "نحلة", clue: "حشرة تنتج العسل", category: "حيوان", difficulty: 2 },
+  { word: "حديقة", clue: "مكان تكثر فيه النباتات", category: "طبيعة", difficulty: 2 },
+  { word: "مدينة", clue: "تجمع سكاني كبير", category: "مكان", difficulty: 2 },
+  { word: "سفينة", clue: "مركبة تسير في الماء", category: "سفر", difficulty: 2 },
+  { word: "سيارة", clue: "مركبة ذات عجلات", category: "سفر", difficulty: 2 },
+  { word: "طائرة", clue: "مركبة تحلق في الجو", category: "سفر", difficulty: 2 },
+  { word: "مدرسة", clue: "مكان التعلم النظامي", category: "تعليم", difficulty: 2 },
+  { word: "معلم", clue: "من يشرح العلم للطلاب", category: "تعليم", difficulty: 2 },
+  { word: "سؤال", clue: "استفهام ينتظر جوابًا", category: "لغة", difficulty: 2 },
+  { word: "جواب", clue: "رد على سؤال", category: "لغة", difficulty: 2 },
+  { word: "مكتبة", clue: "مكان الكتب والقراءة", category: "تعليم", difficulty: 3 },
+  { word: "قصيدة", clue: "كلام موزون مقفى", category: "أدب", difficulty: 3 },
+  { word: "شاعر", clue: "من ينظم الشعر", category: "أدب", difficulty: 3 },
+  { word: "حكمة", clue: "قول موجز يحمل تجربة", category: "لغة", difficulty: 3 },
+  { word: "معجم", clue: "كتاب يشرح معاني الكلمات", category: "لغة", difficulty: 3 },
+  { word: "بلاغة", clue: "جودة التعبير ومطابقته للمقام", category: "لغة", difficulty: 4 },
+  { word: "فصيح", clue: "واضح اللفظ سليم العبارة", category: "لغة", difficulty: 3 },
+  { word: "تراث", clue: "ما خلفه السابقون من ثقافة", category: "ثقافة", difficulty: 3 },
+  { word: "حضارة", clue: "منجزات أمة في زمنها", category: "تاريخ", difficulty: 4 },
+  { word: "تاريخ", clue: "سجل أحداث الماضي", category: "تاريخ", difficulty: 3 },
+  { word: "مخطوط", clue: "كتاب قديم مكتوب باليد", category: "ثقافة", difficulty: 4 },
+  { word: "متحف", clue: "مكان عرض الآثار والتحف", category: "ثقافة", difficulty: 3 },
+  { word: "أطلال", clue: "بقايا مبان قديمة", category: "تاريخ", difficulty: 4 },
+  { word: "فيلسوف", clue: "باحث في أسئلة الوجود والحكمة", category: "فكر", difficulty: 5 },
+  { word: "منطق", clue: "علم صحة التفكير والاستدلال", category: "فكر", difficulty: 5 },
+  { word: "معرفة", clue: "إدراك الشيء وفهمه", category: "فكر", difficulty: 3 },
+  { word: "تجربة", clue: "اختبار عملي لفكرة أو ظاهرة", category: "علوم", difficulty: 3 },
+  { word: "نظرية", clue: "تفسير منظم تدعمه الأدلة", category: "علوم", difficulty: 5 },
+  { word: "ذرة", clue: "أصغر وحدة من عنصر كيميائي", category: "علوم", difficulty: 5 },
+  { word: "خلية", clue: "الوحدة الأساسية في الكائن الحي", category: "علوم", difficulty: 4 },
+  { word: "جاذبية", clue: "قوة جذب الأجسام نحو بعضها", category: "علوم", difficulty: 5 },
+  { word: "طاقة", clue: "القدرة على بذل شغل", category: "علوم", difficulty: 4 },
+  { word: "مجرة", clue: "تجمع هائل من النجوم", category: "فضاء", difficulty: 4 },
+  { word: "كوكب", clue: "جرم يدور حول نجم", category: "فضاء", difficulty: 3 },
+  { word: "فلك", clue: "مسار جرم سماوي", category: "فضاء", difficulty: 5 },
+  { word: "بوصلة", clue: "أداة تحدد الجهات", category: "سفر", difficulty: 3 },
+  { word: "خريطة", clue: "رسم يوضح الأماكن والطرق", category: "سفر", difficulty: 3 },
+  { word: "مرفأ", clue: "مكان رسو السفن", category: "سفر", difficulty: 4 },
+  { word: "قافلة", clue: "جماعة مسافرين معًا", category: "سفر", difficulty: 4 },
+  { word: "سوق", clue: "مكان البيع والشراء", category: "حياة", difficulty: 2 },
+  { word: "تجارة", clue: "نشاط تبادل السلع", category: "حياة", difficulty: 3 },
+  { word: "زراعة", clue: "استنبات الأرض وإنتاج المحاصيل", category: "حياة", difficulty: 3 },
+  { word: "صناعة", clue: "تحويل المواد إلى منتجات", category: "حياة", difficulty: 3 },
+  { word: "مهنة", clue: "عمل يكتسب منه الإنسان رزقه", category: "حياة", difficulty: 3 },
+  { word: "ميزان", clue: "أداة لمعرفة الوزن أو العدل", category: "حياة", difficulty: 3 },
+  { word: "عدالة", clue: "إعطاء كل ذي حق حقه", category: "قيم", difficulty: 4 },
+  { word: "شجاعة", clue: "قوة القلب عند الشدائد", category: "قيم", difficulty: 3 },
+  { word: "أمانة", clue: "حفظ الحقوق وأداء الودائع", category: "قيم", difficulty: 3 },
+  { word: "كرامة", clue: "عزة النفس ورفعتها", category: "قيم", difficulty: 4 },
+  { word: "تعاون", clue: "عمل جماعي لتحقيق غاية", category: "قيم", difficulty: 3 },
+  { word: "إبداع", clue: "إنتاج جديد غير مألوف", category: "فكر", difficulty: 4 },
+  { word: "ابتكار", clue: "استحداث فكرة أو طريقة جديدة", category: "فكر", difficulty: 4 },
+  { word: "تركيز", clue: "جمع الانتباه على أمر واحد", category: "فكر", difficulty: 3 },
+  { word: "ذاكرة", clue: "قدرة حفظ المعلومات واسترجاعها", category: "فكر", difficulty: 3 },
+  { word: "توازن", clue: "اعتدال بين طرفين", category: "فكر", difficulty: 4 },
+  { word: "موسيقى", clue: "فن تنظيم الأصوات والنغم", category: "فن", difficulty: 3 },
+  { word: "لوحة", clue: "عمل فني مرسوم أو مصور", category: "فن", difficulty: 2 },
+  { word: "مسرح", clue: "مكان تمثيل القصص أمام الجمهور", category: "فن", difficulty: 3 },
+  { word: "نغم", clue: "لحن أو صوت موسيقي", category: "فن", difficulty: 3 },
+  { word: "رواية", clue: "قصة طويلة مكتوبة", category: "أدب", difficulty: 3 },
+  { word: "شخصية", clue: "صورة الفرد وصفاته", category: "أدب", difficulty: 4 },
+  { word: "مجاز", clue: "استعمال اللفظ في غير معناه الأصلي", category: "لغة", difficulty: 6 },
+  { word: "استعارة", clue: "تشبيه حذف أحد طرفيه", category: "لغة", difficulty: 6 },
+  { word: "اشتقاق", clue: "توليد لفظ من لفظ آخر", category: "لغة", difficulty: 6 },
+  { word: "صرف", clue: "علم بنية الكلمة وتحولاتها", category: "لغة", difficulty: 5 },
+  { word: "نحو", clue: "علم إعراب الكلام وتركيبه", category: "لغة", difficulty: 5 },
+  { word: "إحصاء", clue: "جمع البيانات وتحليلها", category: "علوم", difficulty: 5 },
+  { word: "هندسة", clue: "علم دراسة الأشكال والمقادير", category: "علوم", difficulty: 4 },
+  { word: "خوارزمية", clue: "خطوات مرتبة لحل مسألة", category: "تقنية", difficulty: 7 },
+  { word: "برمجة", clue: "كتابة تعليمات للحاسوب", category: "تقنية", difficulty: 4 },
+  { word: "شبكة", clue: "نظام يربط أجهزة أو عناصر", category: "تقنية", difficulty: 4 },
+  { word: "روبوت", clue: "آلة تنفذ مهامًا مبرمجة", category: "تقنية", difficulty: 4 },
+  { word: "استدامة", clue: "استمرار الموارد دون استنزافها", category: "بيئة", difficulty: 6 },
+  { word: "مناخ", clue: "حالة الجو المعتادة في منطقة", category: "بيئة", difficulty: 4 },
+  { word: "بيئة", clue: "المحيط الذي تعيش فيه الكائنات", category: "بيئة", difficulty: 3 },
+  { word: "تدوير", clue: "إعادة استعمال المواد بعد معالجتها", category: "بيئة", difficulty: 4 },
+  { word: "محيط", clue: "مسطح مائي عظيم الاتساع", category: "طبيعة", difficulty: 3 },
+  { word: "بوصلة", clue: "أداة إرشاد المسافر إلى الجهات", category: "سفر", difficulty: 3 },
+];
+
+export const LEVEL_COUNT = 10;
+export const STAGES_PER_LEVEL = 50;
+
+const LEVEL_META = [
+  ["بداية الطريق", "خطوات أولى ممتعة", "أساسيات الحياة", "#0d9488"],
+  ["مفردات يومية", "كلمات من حولك", "الحياة اليومية", "#0891b2"],
+  ["الطبيعة من حولنا", "تأمل العالم", "الطبيعة", "#65a30d"],
+  ["الثقافة واللغة", "اتساع في التعبير", "الثقافة", "#7c3aed"],
+  ["العلوم والحياة", "فكر واكتشف", "العلوم", "#2563eb"],
+  ["التاريخ والحضارة", "آثار لا تنسى", "الحضارة", "#c2410c"],
+  ["عالم الأفكار", "أسئلة أعمق", "الفكر", "#be123c"],
+  ["الدقة والبيان", "للذواقة فقط", "اللغة", "#9333ea"],
+  ["آفاق المعرفة", "معرفة بلا حدود", "المعرفة", "#0369a1"],
+  ["التحدي الكبير", "أثبت براعتك", "التحدي", "#b45309"],
+] as const;
+
+function deterministicPick<T>(items: T[], seed: number): T {
+  return items[Math.abs(seed) % items.length];
+}
+
+function buildStage(level: number, number: number): Stage {
+  const targetCount = Math.min(3 + Math.floor((level - 1) / 2), 7);
+  const allowed = WORD_BANK.filter((item) => item.difficulty <= Math.min(10, level + 1));
+  const selected: WordDefinition[] = [];
+  let cursor = level * 17 + number * 11;
+
+  while (selected.length < targetCount) {
+    const candidate = deterministicPick(allowed, cursor);
+    if (!selected.some((item) => item.word === candidate.word)) selected.push(candidate);
+    cursor += 7;
+  }
+
+  const meta = LEVEL_META[level - 1];
+  return {
+    id: `l${level}-s${number}`,
+    level,
+    number,
+    title: `المرحلة ${String(number).padStart(2, "0")}`,
+    theme: meta[2],
+    entries: selected.map((entry, index) => ({ ...entry, id: `${level}-${number}-${index}` })),
+  };
+}
+
+export const LEVELS: Level[] = LEVEL_META.map((meta, index) => {
+  const number = index + 1;
+  return {
+    number,
+    title: meta[0],
+    subtitle: meta[1],
+    theme: meta[2],
+    accent: meta[3],
+    stages: Array.from({ length: STAGES_PER_LEVEL }, (_, stageIndex) => buildStage(number, stageIndex + 1)),
+  };
+});
+
+export function getStage(level: number, stage: number): Stage {
+  return LEVELS[level - 1]?.stages[stage - 1] ?? LEVELS[0].stages[0];
+}
+
+export function getLevel(level: number): Level {
+  return LEVELS[level - 1] ?? LEVELS[0];
+}
+
+export function stageKey(level: number, stage: number): string {
+  return `l${level}-s${stage}`;
+}
+
+export function totalStageCount(): number {
+  return LEVEL_COUNT * STAGES_PER_LEVEL;
+}

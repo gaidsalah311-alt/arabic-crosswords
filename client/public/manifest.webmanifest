@@ -1,0 +1,12 @@
+{
+  "name": "شَبَكة — كلمات متقاطعة عربية",
+  "short_name": "شَبَكة",
+  "description": "كلمات متقاطعة عربية تعمل دون إنترنت.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f8f4",
+  "theme_color": "#0d7c73",
+  "icons": []
+}
